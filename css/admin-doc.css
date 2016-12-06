@@ -1,0 +1,13 @@
+.goliath-doc-viewer{
+    max-width: 54em;
+}
+
+.goliath-doc-viewer img{
+    max-width: 100%;
+    height: auto;
+}
+
+.goliath-doc-viewer ul{
+    list-style: disc outside;
+    margin-left: 3em;
+}
