@@ -99,7 +99,7 @@ Class Goliath_Doc_viewer{
 
             if( $readme_content ){
 
-                include_once 'inc/parsedown.php';
+                include_once 'inc/Parsedown.php';
                 $Parsedown = new Parsedown();
 
                 echo '<div class="wrap">';
@@ -192,7 +192,7 @@ Class Goliath_Doc_viewer{
 
         if( $doc_content ) {
 
-            include_once 'inc/parsedown.php';
+            include_once 'inc/Parsedown.php';
             $Parsedown = new Parsedown();
 
             $screen->add_help_tab( array(
