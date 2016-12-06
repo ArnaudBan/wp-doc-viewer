@@ -26,7 +26,8 @@ Class Goliath_Doc_viewer{
             $this->child_page = $this->get_all_child_page();
             $this->add_admin_menu();
 
-            add_action( 'load-post.php', array( $this, 'add_page_contextual_help') );
+            add_action( 'load-post.php', array( $this, 'add_single_page_contextual_help') );
+            add_action( 'load-edit.php', array( $this, 'add_archive_page_contextual_help') );
 
         } else {
 
@@ -105,26 +106,27 @@ Class Goliath_Doc_viewer{
                 echo    '<div class="goliath-doc-viewer">';
                 echo        $Parsedown->text($readme_content);
 
-                if( 'readme' == $page_slug ){
-                    // Add a list of page on the firste page
-                    echo '<ul>';
-                    foreach ( $this->child_page as $slug => $title ){
-
-                        $admin_page = admin_url( "/admin.php?page=$slug" );
-                        echo "<li><a href='$admin_page'>$title</a></li>";
-                    }
-                    echo '</ul>';
-                }
-
-                echo    '</div>';
-                echo '</div>';
             }
+
+            if( 'readme' == $page_slug ){
+                // Add a list of page on the firste page
+                echo '<ul>';
+                foreach ( $this->child_page as $slug => $title ){
+
+                    $admin_page = admin_url( "/admin.php?page=$slug" );
+                    echo "<li><a href='$admin_page'>$title</a></li>";
+                }
+                echo '</ul>';
+            }
+
+            echo    '</div>';
+            echo '</div>';
 
         }
 
     }
 
-    public function add_page_contextual_help(){
+    public function add_single_page_contextual_help(){
 
         $screen = get_current_screen();
 
@@ -132,9 +134,9 @@ Class Goliath_Doc_viewer{
 
         $page_slug = false;
 
-        if( in_array( 'post-type-' . $screen->post_type, $child_page_slug ) ) {
+        if( in_array( 'single-' . $screen->post_type, $child_page_slug ) ) {
 
-            $page_slug = 'post-type-' . $screen->post_type;
+            $page_slug = 'single-' . $screen->post_type;
 
         } elseif ( 'page' == $screen->post_type ){
 
@@ -157,19 +159,47 @@ Class Goliath_Doc_viewer{
 
         if( $page_slug ){
 
-            $doc_content = file_get_contents( $this->doc_path . $page_slug . '.md');
+            $this->add_contextual_help( $screen, $page_slug );
+        }
+    }
 
-            if( $doc_content ) {
+    public function add_archive_page_contextual_help(){
 
-                include_once 'inc/parsedown.php';
-                $Parsedown = new Parsedown();
 
-                $screen->add_help_tab( array(
-                    'id'      => 'goliath_doc_viewer_' . $page_slug,
-                    'title'   => $this->child_page[ $page_slug ],
-                    'content' => $Parsedown->text( $doc_content ),
-                ) );
-            }
+        $screen = get_current_screen();
+
+        $child_page_slug = array_keys( $this->child_page );
+
+        $page_slug = false;
+
+        if( in_array( 'archive-' . $screen->post_type, $child_page_slug ) ) {
+
+            $page_slug = 'archive-' . $screen->post_type;
+
+        }
+
+
+        if( $page_slug ){
+
+            $this->add_contextual_help( $screen, $page_slug );
+        }
+
+    }
+
+    private function add_contextual_help( $screen, $page_slug ){
+
+        $doc_content = file_get_contents( $this->doc_path . $page_slug . '.md');
+
+        if( $doc_content ) {
+
+            include_once 'inc/parsedown.php';
+            $Parsedown = new Parsedown();
+
+            $screen->add_help_tab( array(
+                'id'      => 'goliath_doc_viewer_' . $page_slug,
+                'title'   => $this->child_page[ $page_slug ],
+                'content' => $Parsedown->text( $doc_content ),
+            ) );
         }
     }
 }
