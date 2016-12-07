@@ -11,3 +11,8 @@
     list-style: disc outside;
     margin-left: 3em;
 }
+.goliath-doc-viewer blockquote{
+    border-left: 5px solid #0073aa;
+    padding-left: 1em;
+    margin-left: 1em;
+}
