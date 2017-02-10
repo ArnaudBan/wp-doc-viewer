@@ -144,6 +144,15 @@ Class Goliath_Doc_viewer{
 
             if( $page_id ){
 
+                if( $page_id == get_option('page_on_front' ) ){
+
+                    if( in_array( 'front-page', $child_page_slug) ){
+
+                        $page_slug = 'front-page';
+                    }
+
+                }
+
                 $page_template = get_post_meta( $page_id, '_wp_page_template', true);
 
                 $page_template = substr( $page_template, 0, -4 );
