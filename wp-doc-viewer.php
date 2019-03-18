@@ -104,11 +104,17 @@ Class WP_Doc_viewer{
 
                 echo '<div class="wrap">';
                 echo    '<div class="goliath-doc-viewer">';
+
+                if( 'readme' !== $page_slug ) {
+                    $admin_page = admin_url( "/admin.php?page=site-user-documentation" );
+                    echo  "<a href='$admin_page'>< Retour</a>";
+                }
+
                 echo        $Parsedown->text($readme_content);
 
             }
 
-            if( 'readme' == $page_slug ){
+            if( 'readme' === $page_slug ){
                 // Add a list of page on the firste page
                 echo '<ul>';
                 foreach ( $this->child_page as $slug => $title ){
