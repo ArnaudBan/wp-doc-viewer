@@ -1,0 +1,19 @@
+{
+  "name": "arnaudban/wp-doc-viewer",
+  "description": "Show the user doc in the admin area of your WordPress installation",
+  "type": "wordpress-plugin",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "ArnaudBan",
+      "email": "arnaud@banvillet.fr"
+    },
+    {
+      "name": "Matiere Noire",
+      "email": "contact@matierenoire.io"
+    }
+  ],
+  "require": {
+    "erusev/parsedown": "^1.7"
+  }
+}

@@ -1,14 +1,15 @@
 <?php
 /**
- * Plugin Name: Goliath Doc viewer
+ * Plugin Name: WP Doc viewer
  * Description: Show the user doc in the admin area of your WordPress installation
- * Author: Studio Goliath
+ * Author: ArnaudBan
  * Version: 1.0
- * Author URI: https://www.studio-goliath.com
+ * Author URI: https://arnaudban.me
  */
 
+require plugin_dir_path( __FILE__ ) . '/vendor/autoload.php';
 
-Class Goliath_Doc_viewer{
+Class WP_Doc_viewer{
 
     var $doc_path;
     var $child_page;
@@ -99,7 +100,6 @@ Class Goliath_Doc_viewer{
 
             if( $readme_content ){
 
-                include_once 'inc/Parsedown.php';
                 $Parsedown = new Parsedown();
 
                 echo '<div class="wrap">';
@@ -201,7 +201,6 @@ Class Goliath_Doc_viewer{
 
         if( $doc_content ) {
 
-            include_once 'inc/Parsedown.php';
             $Parsedown = new Parsedown();
 
             $screen->add_help_tab( array(
@@ -213,7 +212,7 @@ Class Goliath_Doc_viewer{
     }
 }
 
-add_action('admin_menu', function(){ new Goliath_Doc_viewer(); });
+add_action('admin_menu', function(){ new WP_Doc_viewer(); });
 
 
 
