@@ -7,12 +7,10 @@
  * Author URI: https://arnaudban.me
  */
 
-require plugin_dir_path( __FILE__ ) . '/vendor/autoload.php';
-
 Class WP_Doc_viewer{
 
-    var $doc_path;
-    var $child_page;
+    private $doc_path;
+    private $child_page;
 
 
     public function __construct() {
@@ -37,16 +35,19 @@ Class WP_Doc_viewer{
         }
     }
 
-
-    private function add_admin_menu(){
+    /**
+     *
+     */
+    private function add_admin_menu(): void
+    {
 
         // Create admin menu
         $page_suffix = array();
-        $page_suffix[] = add_menu_page( __('Site Documentation', 'goliath-doc-viewer'), __('Theme Doc', 'goliath-doc-viewer' ) , 'manage_options', 'site-user-documentation', array( $this, 'goliath_add_documentation_content_page') );
+        $page_suffix[] = add_menu_page( __('Site Documentation', 'goliath-doc-viewer'), __('Theme Doc', 'goliath-doc-viewer' ) , 'manage_options', 'site-user-documentation', array( $this, 'add_documentation_content_page') );
 
         foreach ( $this->child_page as $slug => $title ){
 
-            $page_suffix[] = add_submenu_page( 'site-user-documentation', $title, $title, 'manage_options', $slug, array( $this, 'goliath_add_documentation_content_page'));
+            $page_suffix[] = add_submenu_page( 'site-user-documentation', $title, $title, 'manage_options', $slug, array( $this, 'add_documentation_content_page'));
         }
 
         foreach ( $page_suffix as $suffix ){
@@ -55,7 +56,11 @@ Class WP_Doc_viewer{
 
     }
 
-    private function get_all_child_page(){
+    /**
+     * @return array
+     */
+    private function get_all_child_page(): array
+    {
 
         $child_page = array();
 
@@ -66,7 +71,7 @@ Class WP_Doc_viewer{
 
             foreach ( $all_doc_files as $file ){
 
-                if( substr($file, -3) == '.md' && $file != 'readme.md' ){
+                if( $file !== 'readme.md' && substr($file, -3) === '.md'  ){
 
                     $page_slug = substr( $file, 0, -3 );
                     $page_title =  ucfirst( str_replace( array( '-', '_' ), ' ', $page_slug ) );
@@ -80,19 +85,29 @@ Class WP_Doc_viewer{
 
     }
 
-    public function admin_custom_css(){
+
+    /**
+     *
+     */
+    public function admin_custom_css(): void
+    {
 
 
-        wp_enqueue_style( 'goliath_doc_viewer_style', plugins_url( 'css/admin-doc.css', __FILE__ ) );
+        wp_enqueue_style( 'doc_viewer_style', plugins_url( 'css/admin-doc.css', __FILE__ ) );
     }
 
-    public function goliath_add_documentation_content_page(){
 
-        $page_slug = isset( $_GET['page'] ) ? $_GET['page'] : false ;
+    /**
+     *
+     */
+    public function add_documentation_content_page(): void
+    {
+
+        $page_slug = $_GET['page'] ?? null;
 
         if( $page_slug ){
 
-            if( 'site-user-documentation' == $page_slug ){
+            if( 'site-user-documentation' === $page_slug ){
                 $page_slug = 'readme';
             }
 
@@ -100,17 +115,17 @@ Class WP_Doc_viewer{
 
             if( $readme_content ){
 
-                $Parsedown = new Parsedown();
+                $parsedown = new Parsedown();
 
                 echo '<div class="wrap">';
                 echo    '<div class="goliath-doc-viewer">';
 
                 if( 'readme' !== $page_slug ) {
-                    $admin_page = admin_url( "/admin.php?page=site-user-documentation" );
+                    $admin_page = admin_url( '/admin.php?page=site-user-documentation' );
                     echo  "<a href='$admin_page'>< Retour</a>";
                 }
 
-                echo        $Parsedown->text($readme_content);
+                echo        $parsedown->text($readme_content);
 
             }
 
@@ -132,93 +147,108 @@ Class WP_Doc_viewer{
 
     }
 
-    public function add_single_page_contextual_help(){
+    /**
+     *
+     */
+    public function add_single_page_contextual_help(): void
+    {
 
         $screen = get_current_screen();
 
-        $child_page_slug = array_keys( $this->child_page );
+        if ( $screen ){
 
-        $page_slug = false;
+            $child_page_slug = array_keys( $this->child_page );
 
-        if( in_array( 'single-' . $screen->post_type, $child_page_slug ) ) {
+            $page_slug = false;
 
-            $page_slug = 'single-' . $screen->post_type;
+            if( in_array( 'single-' . $screen->post_type, $child_page_slug, true ) ) {
 
-        } elseif ( 'page' == $screen->post_type ){
+                $page_slug = 'single-' . $screen->post_type;
 
-            $page_id = isset( $_GET['post'] ) ? intval($_GET['post'] ) : false;
+            } elseif ( 'page' === $screen->post_type ){
 
-            if( $page_id ){
+                $page_id = isset( $_GET['post'] ) ? (int) $_GET['post'] : false;
 
-                if( $page_id == get_option('page_on_front' ) ){
+                if( $page_id ){
 
-                    if( in_array( 'front-page', $child_page_slug) ){
+                    if( $page_id === get_option('page_on_front' ) ){
 
-                        $page_slug = 'front-page';
+                        if( in_array( 'front-page', $child_page_slug, true ) ){
+
+                            $page_slug = 'front-page';
+                        }
+
                     }
 
+                    $page_template = get_post_meta( $page_id, '_wp_page_template', true);
+
+                    $page_template = substr( $page_template, 0, -4 );
+
+                    if( in_array( $page_template, $child_page_slug, true ) ){
+
+                        // Boom on ajoute la bon doc;
+                        $page_slug = $page_template;
+                    }
                 }
 
-                $page_template = get_post_meta( $page_id, '_wp_page_template', true);
-
-                $page_template = substr( $page_template, 0, -4 );
-
-                if( in_array( $page_template, $child_page_slug) ){
-
-                    // Boom on ajoute la bon doc;
-                    $page_slug = $page_template;
-                }
             }
 
+            if( $page_slug ){
+
+                $this->add_contextual_help( $screen, $page_slug );
+            }
         }
 
-        if( $page_slug ){
-
-            $this->add_contextual_help( $screen, $page_slug );
-        }
     }
 
-    public function add_archive_page_contextual_help(){
+    public function add_archive_page_contextual_help(): void
+    {
 
 
         $screen = get_current_screen();
 
-        $child_page_slug = array_keys( $this->child_page );
+        if( $screen ){
 
-        $page_slug = false;
+            $child_page_slug = array_keys( $this->child_page );
 
-        if( in_array( 'archive-' . $screen->post_type, $child_page_slug ) ) {
+            $page_slug = false;
 
-            $page_slug = 'archive-' . $screen->post_type;
+            if( in_array( 'archive-' . $screen->post_type, $child_page_slug, true ) ) {
 
+                $page_slug = 'archive-' . $screen->post_type;
+
+            }
+
+
+            if( $page_slug ){
+
+                $this->add_contextual_help( $screen, $page_slug );
+            }
         }
 
-
-        if( $page_slug ){
-
-            $this->add_contextual_help( $screen, $page_slug );
-        }
 
     }
 
-    private function add_contextual_help( $screen, $page_slug ){
+    /**
+     * @param WP_Screen $screen
+     * @param string $page_slug
+     */
+    private function add_contextual_help( WP_Screen $screen, string $page_slug ): void
+    {
 
         $doc_content = file_get_contents( $this->doc_path . $page_slug . '.md');
 
         if( $doc_content ) {
 
-            $Parsedown = new Parsedown();
+            $parsedown = new Parsedown();
 
             $screen->add_help_tab( array(
-                'id'      => 'goliath_doc_viewer_' . $page_slug,
+                'id'      => 'doc_viewer_' . $page_slug,
                 'title'   => $this->child_page[ $page_slug ],
-                'content' => $Parsedown->text( $doc_content ),
+                'content' => $parsedown->text( $doc_content ),
             ) );
         }
     }
 }
 
-add_action('admin_menu', function(){ new WP_Doc_viewer(); });
-
-
-
+add_action('admin_menu', static function(){ new WP_Doc_viewer(); });
