@@ -1,17 +1,26 @@
-.goliath-doc-viewer{
-    max-width: 54em;
+.wp-doc-viewer{
+    display: flex;
 }
 
-.goliath-doc-viewer img{
+.wp-doc-viewer__content {
+    max-width: 54em;
+    flex-grow: 1;
+}
+
+.wp-doc-viewer__toc--item.current{
+    font-weight: 700;
+}
+
+.wp-doc-viewer img{
     max-width: 100%;
     height: auto;
 }
 
-.goliath-doc-viewer ul{
+.wp-doc-viewer ul{
     list-style: disc outside;
     margin-left: 3em;
 }
-.goliath-doc-viewer blockquote{
+.wp-doc-viewer blockquote{
     border-left: 5px solid #0073aa;
     padding-left: 1em;
     margin-left: 1em;
