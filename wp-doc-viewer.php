@@ -240,6 +240,7 @@ Class WP_Doc_viewer{
                 }
                 return ($a['order'] < $b['order']) ? -1 : 1;
             } );
+            $sections[$section] = $pages;
         }
 
 
