@@ -70,7 +70,7 @@ Class WP_Doc_viewer{
 
         foreach ( $this->order_sections as $section_slug => $pages ){
 
-            $page_suffix[] = add_submenu_page( 'site-user-documentation', $section_slug, $section_slug, 'manage_options', $section_slug, array( $this, 'add_documentation_content_page'));
+            $page_suffix[] = add_submenu_page( 'site-user-documentation', $section_slug, ucfirst($section_slug), 'manage_options', $section_slug, array( $this, 'add_documentation_content_page'));
         }
 
         foreach ( $page_suffix as $suffix ){
@@ -103,7 +103,7 @@ Class WP_Doc_viewer{
 
                     $meta = $parsedown->meta( file_get_contents( $file ) );
 
-                    $section = 'Générale';
+                    $section = 'Général';
                     if( isset( $meta['section'] ) ){
                         $section = $meta['section'];
                     } else {
@@ -208,7 +208,7 @@ Class WP_Doc_viewer{
         foreach ( $this->order_sections as $sec => $pages ){
 
 
-            echo "<h3>$sec</h3>";
+            echo "<h3>".ucfirst($sec)."</h3>";
 
             echo '<ul>';
             foreach ( $pages as $p ){
