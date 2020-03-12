@@ -1,27 +1,33 @@
-.wp-doc-viewer{
-    display: flex;
+.wp-doc-viewer {
+  display: flex;
+  justify-content: space-between;
 }
 
 .wp-doc-viewer__content {
-    max-width: 54em;
-    flex-grow: 1;
+  max-width: 54em;
+  flex-grow: 1;
 }
 
-.wp-doc-viewer__toc--item.current{
-    font-weight: 700;
+.wp-doc-viewer__toc {
+  padding: 2em;
+  background-color: white;
 }
 
-.wp-doc-viewer img{
-    max-width: 100%;
-    height: auto;
+.wp-doc-viewer__toc--item.current {
+  font-weight: 700;
 }
 
-.wp-doc-viewer ul{
-    list-style: disc outside;
-    margin-left: 3em;
+.wp-doc-viewer img {
+  max-width: 100%;
+  height: auto;
 }
-.wp-doc-viewer blockquote{
-    border-left: 5px solid #0073aa;
-    padding-left: 1em;
-    margin-left: 1em;
+
+.wp-doc-viewer ul {
+  list-style: disc outside;
+  margin-left: 3em;
+}
+.wp-doc-viewer blockquote {
+  border-left: 5px solid #0073aa;
+  padding-left: 1em;
+  margin-left: 1em;
 }
