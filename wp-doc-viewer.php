@@ -192,8 +192,9 @@ Class WP_Doc_viewer{
     private function toc()
     {
 
-        $section = $_GET['page'];
-        $file = $_GET['file'];
+        $section = $_GET['page'] ?? null;
+        $file = $_GET['file'] ?? null;
+
 
         if( $section === 'site-user-documentation' ){
             $section = array_key_first( $this->order_sections );
@@ -257,7 +258,7 @@ Class WP_Doc_viewer{
 
         if ( $screen ){
 
-            $child_page_slug = array_keys( $this->child_page );
+            $child_page_slug = array_keys( $this->doc_pages );
 
             $page_slug = false;
 
@@ -309,7 +310,7 @@ Class WP_Doc_viewer{
 
         if( $screen ){
 
-            $child_page_slug = array_keys( $this->child_page );
+            $child_page_slug = array_keys( $this->doc_pages );
 
             $page_slug = false;
 
@@ -344,7 +345,7 @@ Class WP_Doc_viewer{
 
             $screen->add_help_tab( array(
                 'id'      => 'doc_viewer_' . $page_slug,
-                'title'   => $this->child_page[ $page_slug ],
+                'title'   => $this->doc_pages[ $page_slug ],
                 'content' => $parsedown->text( $doc_content ),
             ) );
         }

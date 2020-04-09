@@ -15,9 +15,9 @@
   ],
   "require": {
     "erusev/parsedown": "^1.7",
-    "pagerange/metaparsedown": "^1.0"
-  }
-  ,
+    "pagerange/metaparsedown": "^1.0",
+    "php": ">=7.3.0"
+  },
   "require-dev": {
     "roave/security-advisories": "dev-master"
   }
