@@ -7,13 +7,14 @@
  * Author URI: https://arnaudban.me
  */
 
+include 'polyfill.php';
+
 use Pagerange\Markdown\MetaParsedown;
 use Pagerange\Markdown\ParserNotFoundException;
 
 if( ! class_exists( 'MetaParsedown' ) && file_exists( __DIR__ . '/vendor/autoload.php' ) ){
     require __DIR__ . '/vendor/autoload.php';
 }
-
 
 Class WP_Doc_viewer{
 
@@ -258,11 +259,13 @@ Class WP_Doc_viewer{
 
         if ( $screen ){
 
-            $child_page_slug = array_keys( $this->doc_pages );
+            if( $this->doc_pages ){
+                $child_page_slug = array_keys( $this->doc_pages );
+            }
 
             $page_slug = false;
 
-            if( in_array( 'single-' . $screen->post_type, $child_page_slug, true ) ) {
+            if( $this->doc_pages && in_array( 'single-' . $screen->post_type, $child_page_slug, true ) ) {
 
                 $page_slug = 'single-' . $screen->post_type;
 
@@ -310,19 +313,19 @@ Class WP_Doc_viewer{
 
         if( $screen ){
 
-            $child_page_slug = array_keys( $this->doc_pages );
+            if( $this->doc_pages ){
+                $child_page_slug = array_keys( $this->doc_pages );
+            }
 
             $page_slug = false;
 
-            if( in_array( 'archive-' . $screen->post_type, $child_page_slug, true ) ) {
+            if( $this->doc_pages && in_array( 'archive-' . $screen->post_type, $child_page_slug, true ) ) {
 
                 $page_slug = 'archive-' . $screen->post_type;
 
             }
 
-
             if( $page_slug ){
-
                 $this->add_contextual_help( $screen, $page_slug );
             }
         }
