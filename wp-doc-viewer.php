@@ -3,7 +3,7 @@
  * Plugin Name: WP Doc viewer
  * Description: Show the user doc in the admin area of your WordPress installation
  * Author: ArnaudBan
- * Version: 1.0
+ * Version: 1.2.4
  * Author URI: https://arnaudban.me
  */
 
@@ -12,6 +12,16 @@ use Pagerange\Markdown\ParserNotFoundException;
 
 if( ! class_exists( 'MetaParsedown' ) && file_exists( __DIR__ . '/vendor/autoload.php' ) ){
     require __DIR__ . '/vendor/autoload.php';
+}
+
+// array_key_first added in PHP 7.3.0
+if (!function_exists('array_key_first')) {
+    function array_key_first(array $arr) {
+        foreach($arr as $key => $unused) {
+            return $key;
+        }
+        return NULL;
+    }
 }
 
 
