@@ -3,12 +3,14 @@
  * Plugin Name: WP Doc viewer
  * Description: Show the user doc in the admin area of your WordPress installation
  * Author: ArnaudBan
- * Version: 1.2.4
+ * Version: 1.3.0
  * Author URI: https://arnaudban.me
  */
 
 use Pagerange\Markdown\MetaParsedown;
 use Pagerange\Markdown\ParserNotFoundException;
+use Dompdf\Dompdf;
+
 
 if( ! class_exists( 'MetaParsedown' ) && file_exists( __DIR__ . '/vendor/autoload.php' ) ){
     require __DIR__ . '/vendor/autoload.php';
@@ -65,6 +67,7 @@ Class WP_Doc_viewer{
 
             add_action( 'load-post.php', array( $this, 'add_single_page_contextual_help') );
             add_action( 'load-edit.php', array( $this, 'add_archive_page_contextual_help') );
+            add_action( 'admin_init', [ $this, 'export_pdf'] );
         }
     }
 
@@ -87,6 +90,36 @@ Class WP_Doc_viewer{
             add_action( 'admin_print_styles-' . $suffix, array( $this, 'admin_custom_css' ) );
         }
 
+    }
+
+    public function export_pdf(){
+
+        $export_pdf = isset($_GET['export-doc']) && current_user_can( 'manage_options');
+
+        if( $export_pdf ){
+            $parsedown = new MetaParsedown();
+            $dompdf = new Dompdf();
+
+            $html = '<h1>Documentation</h1>';
+            foreach ( $this->order_sections as $section_title => $pages ){
+
+                $html .= "<h2>$section_title</h2>";
+                foreach ( $pages as $page ){
+                    $readme_content = file_get_contents( $page['path'] );
+                    $html .= $parsedown->text($readme_content);
+                }
+            }
+
+            $dompdf->loadHtml($html );
+            // (Optional) Setup the paper size and orientation
+            $dompdf->setPaper('A4', 'portrait');
+
+            // Render the HTML as PDF
+            $dompdf->render();
+
+            // Output the generated PDF to Browser
+            $dompdf->stream();
+        }
     }
 
     /**
@@ -181,7 +214,7 @@ Class WP_Doc_viewer{
                 echo    '<div class="wp-doc-viewer__content">';
 
                 $admin_page = admin_url( '/admin.php?page=site-user-documentation' );
-                echo  "<a href='$admin_page'>< Retour</a>";
+                echo  "<a href='$admin_page' class='button'>< Retour</a>";
 
                 echo        $parsedown->text($readme_content);
 
@@ -230,6 +263,10 @@ Class WP_Doc_viewer{
             }
             echo '</ul>';
         }
+
+        $admin_url_export = admin_url('?export-doc=true');
+        echo '<h2>Export</h2>';
+        echo "<a class='button' href='{$admin_url_export}'>Exporter</a>";
     }
 
     private function setOrderSection()

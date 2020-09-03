@@ -16,7 +16,8 @@
   "require": {
     "erusev/parsedown": "^1.7",
     "pagerange/metaparsedown": "^1.0",
-    "php": ">=7.0"
+    "php": ">=7.0",
+    "dompdf/dompdf": "^0.8.5"
   },
   "require-dev": {
     "roave/security-advisories": "dev-master"
